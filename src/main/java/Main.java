@@ -26,14 +26,19 @@ public class Main {
 
     public static void main(String[] args) {
         // Temporary Stuff. Default values
-        String clientId = "unknown";
-        String clientSecret = "unknown";
-        String groupName;
+        Scanner s = new Scanner(System.in);
+        String clientId = "", clientSecret = "", groupName = "";
+
+        // OAUth input
+        System.out.print("Enter ClientID: ");
+        clientId = s.nextLine().trim();
+
+        System.out.print("Enter Client Secret: ");
+        clientSecret = s.nextLine().trim();
 
         // Group Name input
-        Scanner s = new Scanner(System.in);
-        System.out.print("Enter Group Name: ");
-        groupName = s.nextLine();
+        System.out.print("Enter Group Name/ID: ");
+        groupName = s.nextLine().trim();
 
         // Configure SDK settings
         String accessToken = getToken(clientId, clientSecret);
@@ -57,6 +62,7 @@ public class Main {
                     .build();
 
             subscribeToUserGroupPresence(users, notificationHandler);
+            System.out.println("Listening...");
         }catch(Exception e) {
             //TODO
             e.printStackTrace();
@@ -181,7 +187,8 @@ public class Main {
             if(connection.getResponseCode() == 200) {
                 InputStream response = connection.getInputStream();
                 String responseString =  Helper.convertStreamToString(response);
-                // Extract token from response string.
+                // Hacky-way of extracting token from response string
+                // so we don't have to add external library for JSON parsing
                 token = responseString.substring(responseString.indexOf(':')+2,
                         responseString.indexOf(',')-1).trim();
             }else {
