@@ -6,10 +6,7 @@ import com.mypurecloud.sdk.v2.ApiClient;
 import com.mypurecloud.sdk.v2.ApiException;
 import com.mypurecloud.sdk.v2.Configuration;
 import com.mypurecloud.sdk.v2.api.GroupsApi;
-import com.mypurecloud.sdk.v2.api.NotificationsApi;
-import com.mypurecloud.sdk.v2.api.UsersApi;
 import com.mypurecloud.sdk.v2.extensions.notifications.NotificationHandler;
-import com.mypurecloud.sdk.v2.extensions.notifications.WebSocketListener;
 import com.mypurecloud.sdk.v2.model.*;
 import com.mypurecloud.sdk.v2.model.GroupSearchCriteria.TypeEnum;
 
@@ -64,21 +61,21 @@ public class Main {
 			//TODO
 			e.printStackTrace();
 		}
-		
 	}
 	
 	/**
 	 * Subscribe the handler to the users' presence and routing statuses.
+	 * @param usersList contains the list of users to subscribe to
+	 * @param handler 	notificationhandler reference
 	 */
 	private static void subscribeToUserGroupPresence(List<User> usersList, NotificationHandler handler){
 		// Account for maximum number of subscribable notifications 
 		if(usersList.size() > 450) {
 			System.out.println("WARNING: Your group has more than 450 members. \n"
-							 + "Channel can only support up to a maximum of 499 members' "
-							 + "notifications.");
+							 + "Channel can only support up to a maximum of 499 members.");
 		}
 		
-		//Loop through users and subscribe to routing status and presencec.
+		// Go through list of users and subscribe to each routing status and presence.
 		try {
 			for(User user : usersList) {
 				handler.addSubscription(new UserPresenceListener(user.getId(), user.getName()));
@@ -93,13 +90,14 @@ public class Main {
 	}
 	
 	/**
-	 * Get members of a group using PureCloud Api. 
-	 * Calls are limited to 50 per page because idk what the maximum is lol
-	 * Returned list will have all members.
+	 * Get members of a group.
+	 * @param group	PureCloud group to get all members from
+	 * @param api	GroupsApi for calling api functions
+	 * @return		list of Users from the group
 	 */
 	private static List<User> getGroupMembers(Group group, GroupsApi api){
 		List<User> members = new ArrayList<User>();
-		int pageSize = 50;
+		int pageSize = 50; //arbitrary number
 		int pageCount = (group.getMemberCount().intValue()/pageSize) + 1;
 		
 		try {
@@ -115,7 +113,10 @@ public class Main {
 	}
 	
 	/**
-	 *	Search and Get a PureCloud group using its name.
+	 *	Search and Get a PureCloud group using its name or id.
+	 * @param name	search query value. Could be a group name or group id.
+	 * @param api	GroupsApi
+	 * @return		First PureCloud Group that is found.
 	 */
 	private static Group getGroup(String name, GroupsApi api){
 		Group result = null;
@@ -124,7 +125,7 @@ public class Main {
 		GroupSearchCriteria criteria = new GroupSearchCriteria();
 		criteria.setValue(name);
 		criteria.setOperator(GroupSearchCriteria.OperatorEnum.AND);
-		criteria.setFields(new ArrayList<String>(Arrays.asList(new String[] {"name"})));
+		criteria.setFields(new ArrayList<String>(Arrays.asList(new String[] {"name", "id"})));
 		criteria.setType(TypeEnum.EXACT);
 		
 		// Build query
@@ -149,6 +150,9 @@ public class Main {
 	
 	/**
 	 *	Request client credentials token from PureCloud
+	 * @param clientId 		OAuth clientid
+	 * @param clientSecret  OAuth client secret
+	 * @return String		access token
 	 */
 	private static String getToken(String clientId, String clientSecret) {
 		String token = "";
