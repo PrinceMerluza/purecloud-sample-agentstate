@@ -58,12 +58,6 @@ public class Main {
      * @param handler 	notificationhandler reference
      */
     private static void subscribeToUserGroupPresence(List<User> usersList, NotificationHandler handler){
-        // Account for maximum number of subscribable notifications
-        if(usersList.size() > 450) {
-            System.out.println("WARNING: Your group has more than 450 members. \n"
-                             + "Channel can only support up to a maximum of 499 members.");
-        }
-
         // Go through list of users and subscribe to each routing status and presence.
         try {
             for(User user : usersList) {
