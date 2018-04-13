@@ -19,11 +19,11 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) throws ApiException, IOException, WebSocketException {
         //OAuth Input
-        String clientId = "e2decb83-0c14-4fae-aff8-583613fa4e5b";
-        String clientSecret = "mDYSE28DqhUsYrZiC1DAWEo9Vt_ZzPH2oHUV2IQB9BM";
+        String clientId = "";
+        String clientSecret = "";
 
         //Group name to get members from
-        String groupName = "Prince_Group";
+        String groupName = "";
 
         // Configure SDK settings
         String accessToken = getToken(clientId, clientSecret);
