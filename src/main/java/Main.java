@@ -15,7 +15,7 @@ import java.net.*;
 import java.util.*;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ApiException, IOException{
         //OAuth Input
         String clientId = "unknown";
         String clientSecret = "unknown";
@@ -34,22 +34,17 @@ public class Main {
         GroupsApi groupsApi = new GroupsApi();
 
         // Get the group members and subscribe to presence,routing status topics..
-        try {
-            Group theGroup = getGroup(groupName, groupsApi);
-            List<User> users = getGroupMembers(theGroup, groupsApi);
+        Group theGroup = getGroup(groupName, groupsApi);
+        List<User> users = getGroupMembers(theGroup, groupsApi);
 
-            NotificationHandler notificationHandler = NotificationHandler.Builder.standard()
-                    .withWebSocketListener(new MyWebSocketListener())
-                    .withNotificationListener(new ChannelMetadataListener())
-                    .withAutoConnect(false)
-                    .build();
+        NotificationHandler notificationHandler = NotificationHandler.Builder.standard()
+                .withWebSocketListener(new MyWebSocketListener())
+                .withNotificationListener(new ChannelMetadataListener())
+                .withAutoConnect(false)
+                .build();
 
-            subscribeToUserGroupPresence(users, notificationHandler);
-            System.out.println("Listening...");
-        }catch(Exception e) {
-            //TODO
-            e.printStackTrace();
-        }
+        subscribeToUserGroupPresence(users, notificationHandler);
+        System.out.println("Listening...");
     }
 
     /**
@@ -57,18 +52,12 @@ public class Main {
      * @param usersList contains the list of users to subscribe to
      * @param handler 	notificationhandler reference
      */
-    private static void subscribeToUserGroupPresence(List<User> usersList, NotificationHandler handler){
+    private static void subscribeToUserGroupPresence(List<User> usersList, NotificationHandler handler) throws ApiException, IOException{
         // Go through list of users and subscribe to each routing status and presence.
-        try {
-            for(User user : usersList) {
-                handler.addSubscription(new UserPresenceListener(user.getId(), user.getName()));
-                handler.addSubscription(new UserRoutingStatusListener(user.getId(), user.getName()));
-                System.out.println("Subscribed to: " + user.getName());
-            }
-
-        } catch (IOException | ApiException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        for(User user : usersList) {
+            handler.addSubscription(new UserPresenceListener(user.getId(), user.getName()));
+            handler.addSubscription(new UserRoutingStatusListener(user.getId(), user.getName()));
+            System.out.println("Subscribed to: " + user.getName());
         }
     }
 
@@ -78,7 +67,7 @@ public class Main {
      * @param api	GroupsApi for calling api functions
      * @return		list of Users from the group
      */
-    private static List<User> getGroupMembers(Group group, GroupsApi api){
+    private static List<User> getGroupMembers(Group group, GroupsApi api) throws ApiException, IOException{
         List<User> members = new ArrayList<User>();
         int pageSize = 50; //arbitrary number
         int pageCount = (group.getMemberCount().intValue()/pageSize) + 1;
@@ -101,7 +90,7 @@ public class Main {
      * @param api	GroupsApi
      * @return		First PureCloud Group that is found.
      */
-    private static Group getGroup(String name, GroupsApi api){
+    private static Group getGroup(String name, GroupsApi api) throws ApiException, IOException{
         Group result = null;
 
         // Search criteria is group name with exact value.
@@ -137,7 +126,7 @@ public class Main {
      * @param clientSecret  OAuth client secret
      * @return String		access token
      */
-    private static String getToken(String clientId, String clientSecret) {
+    private static String getToken(String clientId, String clientSecret)throws ApiException, IOException {
         String token = "";
 
         // Token Request info + encoded client credentials
