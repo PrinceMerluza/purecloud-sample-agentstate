@@ -1,5 +1,6 @@
 package main.java;
 
+import com.neovisionaries.ws.client.WebSocketException;
 import main.utils.*;
 
 import com.mypurecloud.sdk.v2.ApiClient;
@@ -15,7 +16,7 @@ import java.net.*;
 import java.util.*;
 
 public class Main {
-    public static void main(String[] args) throws ApiException, IOException{
+    public static void main(String[] args) throws ApiException, IOException, WebSocketException {
         //OAuth Input
         String clientId = "unknown";
         String clientSecret = "unknown";
