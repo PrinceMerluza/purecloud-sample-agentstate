@@ -16,11 +16,15 @@ public class UserRoutingStatusListener implements NotificationListener<UserRouti
         return topic;
     }
 
+    // Event handler when user presence changes
     public void onEvent(NotificationEvent<?> event) {
         String routingStatus = ((UserRoutingStatusNotification) event.getEventBody()).getRoutingStatus().getStatus().name();
+
+        // Print the user's routing status to the console
         System.out.println("User: " + userName + "\t Routing Status: " + routingStatus);
     }
 
+    // Constructor
     public UserRoutingStatusListener(String userId, String userName) {
         this.userName = userName;
         this.topic = "v2.users." + userId + ".routingStatus";
