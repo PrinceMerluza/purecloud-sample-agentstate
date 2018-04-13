@@ -10,35 +10,18 @@ import com.mypurecloud.sdk.v2.extensions.notifications.NotificationHandler;
 import com.mypurecloud.sdk.v2.model.*;
 import com.mypurecloud.sdk.v2.model.GroupSearchCriteria.TypeEnum;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.List;
-import java.util.Scanner;
-
-import javax.websocket.*;
+import java.util.*;
 
 public class Main {
-
     public static void main(String[] args) {
-        // Temporary Stuff. Default values
-        Scanner s = new Scanner(System.in);
-        String clientId = "", clientSecret = "", groupName = "";
+        //OAuth Input
+        String clientId = "unknown";
+        String clientSecret = "unknown";
 
-        // OAUth input
-        System.out.print("Enter ClientID: ");
-        clientId = s.nextLine().trim();
-
-        System.out.print("Enter Client Secret: ");
-        clientSecret = s.nextLine().trim();
-
-        // Group Name input
-        System.out.print("Enter Group Name/ID: ");
-        groupName = s.nextLine().trim();
+        //Group name to get members from
+        String groupName = "";
 
         // Configure SDK settings
         String accessToken = getToken(clientId, clientSecret);
