@@ -18,12 +18,17 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws ApiException, IOException, WebSocketException {
+        Scanner s = new Scanner(System.in);
+
         //OAuth Input
-        String clientId = "";
-        String clientSecret = "";
+        System.out.print("Enter Client ID: ");
+        String clientId = s.nextLine();
+        System.out.print("Enter Client Secret: ");
+        String clientSecret = s.nextLine();
 
         //Group name to get members from
-        String groupName = "";
+        System.out.print("Enter Group Name: ");
+        String groupName = s.nextLine();
 
         // Configure SDK settings
         String accessToken = getToken(clientId, clientSecret);
@@ -91,8 +96,8 @@ public class Main {
     }
 
     /**
-     *	Search and Get a PureCloud group using its name or id.
-     * @param name	search query value. Could be a group name or group id.
+     *	Search and Get a PureCloud group using its name
+     * @param name	search query value. Could be a group name
      * @param api	GroupsApi
      * @return		First PureCloud Group that is found.
      */
@@ -142,7 +147,7 @@ public class Main {
             InputStream response = connection.getInputStream();
 
             // Convert the InputStream to a String
-            java.util.Scanner s = new java.util.Scanner(response).useDelimiter("\\A");
+            Scanner s = new Scanner(response).useDelimiter("\\A");
             String responseString =  s.hasNext() ? s.next() : "";
 
             // Hacky-way of extracting token from response string
