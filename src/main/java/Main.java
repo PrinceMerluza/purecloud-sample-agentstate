@@ -1,7 +1,8 @@
 package main.java;
 
+import com.mypurecloud.sdk.v2.extensions.notifications.NotificationEvent;
+import com.mypurecloud.sdk.v2.extensions.notifications.NotificationListener;
 import com.neovisionaries.ws.client.WebSocketException;
-import main.utils.*;
 
 import com.mypurecloud.sdk.v2.ApiClient;
 import com.mypurecloud.sdk.v2.ApiException;
@@ -18,11 +19,11 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) throws ApiException, IOException, WebSocketException {
         //OAuth Input
-        String clientId = "unknown";
-        String clientSecret = "unknown";
+        String clientId = "e2decb83-0c14-4fae-aff8-583613fa4e5b";
+        String clientSecret = "mDYSE28DqhUsYrZiC1DAWEo9Vt_ZzPH2oHUV2IQB9BM";
 
         //Group name to get members from
-        String groupName = "";
+        String groupName = "Prince_Group";
 
         // Configure SDK settings
         String accessToken = getToken(clientId, clientSecret);
@@ -60,7 +61,9 @@ public class Main {
     private static void subscribeToUserGroupPresence(List<User> usersList, NotificationHandler handler) throws ApiException, IOException{
         // Go through list of users and subscribe to each routing status and presence.
         for(User user : usersList) {
+            // Add a listener instance for the user's presence
             handler.addSubscription(new UserPresenceListener(user.getId(), user.getName()));
+            // Add a listener instance for the user's routing status
             handler.addSubscription(new UserRoutingStatusListener(user.getId(), user.getName()));
         }
     }
@@ -137,7 +140,10 @@ public class Main {
         // Check if HTTP Response is successful
         if(connection.getResponseCode() == 200) {
             InputStream response = connection.getInputStream();
-            String responseString =  Helper.convertStreamToString(response);
+
+            // Convert the InputStream to a String
+            java.util.Scanner s = new java.util.Scanner(response).useDelimiter("\\A");
+            String responseString =  s.hasNext() ? s.next() : "";
 
             // Hacky-way of extracting token from response string
             // so we don't have to add external library for JSON parsing
@@ -146,5 +152,58 @@ public class Main {
         }
 
         return token;
+    }
+}
+
+/***
+ * Listener for changes in user's presence
+ */
+class UserPresenceListener implements NotificationListener<UserPresenceNotification> {
+    private String topic;
+    private String userName;
+
+    public Class<UserPresenceNotification> getEventBodyClass() { return UserPresenceNotification.class; }
+
+    public String getTopic() { return topic; }
+
+    // Event handler when user presence changes
+    public void onEvent(NotificationEvent<?> event) {
+        String presence = ((UserPresenceNotification) event.getEventBody()).getPresenceDefinition().getSystemPresence();
+
+        // Print the user's presence to the console
+        System.out.println("User: " + userName + "\t Presence: " + presence);
+    }
+
+    // Constructor
+    public UserPresenceListener(String userId, String userName) {
+        this.userName = userName;
+        this.topic = "v2.users." + userId + ".presence";
+    }
+
+}
+
+/***
+ * Listener for changes in user's routing status
+ */
+class UserRoutingStatusListener implements NotificationListener<UserRoutingStatusNotification>{
+    private String topic;
+    private String userName;
+
+    public Class<UserRoutingStatusNotification> getEventBodyClass() { return UserRoutingStatusNotification.class; }
+
+    public String getTopic() { return topic; }
+
+    // Event handler when user presence changes
+    public void onEvent(NotificationEvent<?> event) {
+        String routingStatus = ((UserRoutingStatusNotification) event.getEventBody()).getRoutingStatus().getStatus().name();
+
+        // Print the user's routing status to the console
+        System.out.println("User: " + userName + "\t Routing Status: " + routingStatus);
+    }
+
+    // Constructor
+    public UserRoutingStatusListener(String userId, String userName) {
+        this.userName = userName;
+        this.topic = "v2.users." + userId + ".routingStatus";
     }
 }
