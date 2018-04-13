@@ -18,11 +18,11 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) throws ApiException, IOException, WebSocketException {
         //OAuth Input
-        String clientId = "unknown";
-        String clientSecret = "unknown";
+        String clientId = "e2decb83-0c14-4fae-aff8-583613fa4e5b";
+        String clientSecret = "TEKmVe-dWAwEAePbsXORMTKkOS4NXnooWD1o6L7w4nw";
 
         //Group name to get members from
-        String groupName = "";
+        String groupName = "Prince_Group";
 
         // Configure SDK settings
         String accessToken = getToken(clientId, clientSecret);
@@ -42,8 +42,6 @@ public class Main {
 
         // Build the notification handler
         NotificationHandler notificationHandler = NotificationHandler.Builder.standard()
-                .withWebSocketListener(new MyWebSocketListener())
-                .withNotificationListener(new ChannelMetadataListener())
                 .withAutoConnect(false)
                 .build();
 
@@ -75,7 +73,7 @@ public class Main {
      */
     private static List<User> getGroupMembers(Group group, GroupsApi api) throws ApiException, IOException{
         // The list that will contain the group members
-        List<User> members = new ArrayList<User>();
+        List<User> members = new ArrayList<>();
 
         // Get the number of pages of the group and loop through all them to get all members
         for(int i = 1;i <= (group.getMemberCount().intValue()/25) + 1;i++) {
