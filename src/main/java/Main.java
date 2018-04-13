@@ -55,7 +55,7 @@ public class Main {
         subscribeToUserGroupPresence(users, notificationHandler);
 
         // Display to confirm websocket client is listening
-        System.out.println("Listening...");
+        System.out.println("Websocket Connected. Awaiting messages...");
     }
 
     /**
@@ -173,10 +173,11 @@ class UserPresenceListener implements NotificationListener<UserPresenceNotificat
 
     // Event handler when user presence changes
     public void onEvent(NotificationEvent<?> event) {
-        String presence = ((UserPresenceNotification) event.getEventBody()).getPresenceDefinition().getSystemPresence();
+        System.out.println(event.getEventBodyRaw());
+        //String presence = ((UserPresenceNotification) event.getEventBody()).getPresenceDefinition().getSystemPresence();
 
         // Print the user's presence to the console
-        System.out.println("User: " + userName + "\t Presence: " + presence);
+        //System.out.println("User: " + userName + "\t Presence: " + presence);
     }
 
     // Constructor
@@ -200,10 +201,11 @@ class UserRoutingStatusListener implements NotificationListener<UserRoutingStatu
 
     // Event handler when user presence changes
     public void onEvent(NotificationEvent<?> event) {
-        String routingStatus = ((UserRoutingStatusNotification) event.getEventBody()).getRoutingStatus().getStatus().name();
+        System.out.println(event.getEventBodyRaw());
+        //String routingStatus = ((UserRoutingStatusNotification) event.getEventBody()).getRoutingStatus().getStatus().name();
 
         // Print the user's routing status to the console
-        System.out.println("User: " + userName + "\t Routing Status: " + routingStatus);
+        //System.out.println("User: " + userName + "\t Routing Status: " + routingStatus);
     }
 
     // Constructor
